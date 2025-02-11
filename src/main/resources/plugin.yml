@@ -31,3 +31,5 @@ permissions:
   pnn.reload:
     description: 允许重载配置
     default: op
+
+softdepend: [PlaceholderAPI]

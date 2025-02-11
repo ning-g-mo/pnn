@@ -5,7 +5,8 @@
 #-------------------------------
 
 # 是否启用昵称占位符支持
-# 可能会对假人有用，但是没人会拿假人当npc，对吧？
+# 启用后可以在昵称中使用PlaceholderAPI变量
+# 例如: &c%player_name% 将显示带颜色的玩家名
 placeholder: false
 
 # 屏蔽词列表
@@ -18,25 +19,25 @@ covering-chat: false
 
 # 覆盖聊天格式
 # 可用变量:
-# - {pnn} 直接显示玩家昵称
-# - {pnn_ID} 在玩家ID前显示昵称
-# - {ID_pnn} 在玩家ID后显示昵称
-# - {message} 玩家消息
-covering-chat-formats: "%1$s &f>>> %2$s"
+# - %pnn% 直接显示玩家昵称
+# - %pnn_ID% 在玩家ID前显示昵称
+# - %ID_pnn% 在玩家ID后显示昵称
+# - %message% 玩家消息
+covering-chat-formats: "%pnn% &f>>> %message%"
 
 # 是否覆盖tab栏玩家ID
 cover-tab: false
 
 # tab栏覆盖ID格式
 # 可用变量同上
-cover-tab-formats: "&7{pnn}"
+cover-tab-formats: "&7%pnn%"
 
 # 是否覆盖玩家头
 cover-head: false
 
 # 玩家头显示格式
 # 可用变量同上
-cover-head-formats: "&7{pnn}"
+cover-head-formats: "&7%pnn%"
 
 #-------------------------------
 #              ==数据保存模式==

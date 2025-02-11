@@ -8,7 +8,7 @@ import java.util.List;
 public class ConfigManager {
     
     private final PlayerNickname plugin;
-    private final FileConfiguration config;
+    private FileConfiguration config;
 
     public ConfigManager(PlayerNickname plugin) {
         this.plugin = plugin;
@@ -28,8 +28,7 @@ public class ConfigManager {
     }
 
     public String getCoveringChatFormat() {
-        return config.getString("covering-chat-formats", 
-            plugin.getMessageManager().getMessage("display.chat-format"));
+        return config.getString("covering-chat-formats", "&7%pnn% &f>>> %message%");
     }
 
     public boolean isCoverTab() {
@@ -37,8 +36,7 @@ public class ConfigManager {
     }
 
     public String getCoverTabFormat() {
-        return config.getString("cover-tab-formats", 
-            plugin.getMessageManager().getMessage("display.tab-format"));
+        return config.getString("cover-tab-formats", "&7%pnn%");
     }
 
     public boolean isCoverHead() {
@@ -46,11 +44,15 @@ public class ConfigManager {
     }
 
     public String getCoverHeadFormat() {
-        return config.getString("cover-head-formats", 
-            plugin.getMessageManager().getMessage("display.head-format"));
+        return config.getString("cover-head-formats", "&7%pnn%");
     }
 
     public String getDataSavingMode() {
         return config.getString("data-saving-mode", "yaml").toLowerCase();
+    }
+
+    public void reloadConfig() {
+        plugin.reloadConfig();
+        this.config = plugin.getConfig();
     }
 } 

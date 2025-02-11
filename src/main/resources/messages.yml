@@ -9,11 +9,12 @@ errors:
   player-not-found: "&c未找到使用该昵称的玩家！"
   player-offline: "&e找到昵称记录，但该玩家当前不在线"
   missing-nickname: "&c请输入要设置的昵称！"
+  reload-failed: "&c配置重载失败！请检查控制台获取详细信息。"
 
 success:
   nickname-set: "&a昵称设置成功！"
   nickname-removed: "&a昵称已移除！"
-  config-reloaded: "&a配置文件已重新加载！"
+  config-reloaded: "&a插件已重新加载！&7(包括配置文件、消息和数据存储)"
 
 info:
   help-header: "&7=== 昵称插件帮助 ==="

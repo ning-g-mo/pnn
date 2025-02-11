@@ -6,6 +6,8 @@ import cn.ningmo.pnn.listeners.PlayerListener;
 import cn.ningmo.pnn.storage.StorageManager;
 import cn.ningmo.pnn.config.ConfigManager;
 import cn.ningmo.pnn.config.MessageManager;
+import org.bukkit.event.player.PlayerJoinEvent;
+import cn.ningmo.pnn.hook.PlaceholderHook;
 
 public class PlayerNickname extends JavaPlugin {
     
@@ -32,6 +34,12 @@ public class PlayerNickname extends JavaPlugin {
         // 注册监听器
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
         
+        // 注册PAPI扩展
+        if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new PlaceholderHook(this).register();
+            getLogger().info("已挂钩 PlaceholderAPI!");
+        }
+        
         getLogger().info("玩家昵称插件已启用！");
     }
 
@@ -57,5 +65,20 @@ public class PlayerNickname extends JavaPlugin {
 
     public MessageManager getMessageManager() {
         return messageManager;
+    }
+
+    public void reloadPlugin() {
+        // 重载配置
+        reloadConfig();
+        configManager.reloadConfig();
+        messageManager.reloadMessages();
+        
+        // 重载存储
+        storageManager.reload();
+        
+        // 重新应用所有在线玩家的昵称
+        getServer().getOnlinePlayers().forEach(player -> {
+            getServer().getPluginManager().callEvent(new PlayerJoinEvent(player, null));
+        });
     }
 } 

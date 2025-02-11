@@ -152,9 +152,13 @@ public class NicknameCommand implements CommandExecutor {
     }
 
     private void reloadConfig(CommandSender sender) {
-        plugin.reloadConfig();
-        plugin.getMessageManager().reloadMessages();
-        sender.sendMessage(plugin.getMessageManager().getMessage("success.config-reloaded"));
+        try {
+            plugin.reloadPlugin();
+            sender.sendMessage(plugin.getMessageManager().getMessage("success.config-reloaded"));
+        } catch (Exception e) {
+            sender.sendMessage(plugin.getMessageManager().getMessage("errors.reload-failed"));
+            e.printStackTrace();
+        }
     }
 
     private void sendHelp(CommandSender sender) {

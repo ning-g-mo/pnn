@@ -1,6 +1,7 @@
 package cn.ningmo.pnn.listeners;
 
 import cn.ningmo.pnn.PlayerNickname;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -10,6 +11,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
+import me.clip.placeholderapi.PlaceholderAPI;
 
 public class PlayerListener implements Listener {
     private final PlayerNickname plugin;
@@ -18,14 +20,34 @@ public class PlayerListener implements Listener {
         this.plugin = plugin;
     }
 
+    private String processPlaceholders(String text, Player player) {
+        // 处理颜色代码
+        text = ChatColor.translateAlternateColorCodes('&', text);
+        
+        // 如果启用了PAPI且已安装PAPI
+        if (plugin.getConfigManager().isPlaceholderEnabled() && 
+            Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            text = PlaceholderAPI.setPlaceholders(player, text);
+        }
+        
+        return text;
+    }
+
     private String formatNickname(String format, Player player, String nickname) {
-        // 先处理变量替换
-        String result = format.replace("{pnn}", nickname)
-                             .replace("{pnn_ID}", nickname + player.getName())
-                             .replace("{ID_pnn}", player.getName() + nickname)
-                             .replace("{message}", "%2$s")
-                             .replace("%player%", player.getName())
-                             .replace("%nickname%", nickname);
+        // 处理昵称中的颜色代码和PAPI变量
+        nickname = processPlaceholders(nickname, player);
+        
+        // 处理占位符
+        String result = format
+            .replace("%pnn%", nickname)
+            .replace("%pnn_ID%", nickname + player.getName())
+            .replace("%ID_pnn%", player.getName() + nickname)
+            .replace("%message%", "%2$s")
+            .replace("%player%", player.getName())
+            .replace("%nickname%", nickname);
+        
+        // 处理格式中的颜色代码和PAPI变量
+        result = processPlaceholders(result, player);
         
         // 确保消息占位符正确
         if (!result.contains("%2$s")) {
@@ -52,23 +74,11 @@ public class PlayerListener implements Listener {
             nickname = player.getName();
         }
 
-        // 处理昵称中的颜色代码
-        nickname = ChatColor.translateAlternateColorCodes('&', nickname);
-        
-        // 如果启用了占位符支持
-        if (plugin.getConfigManager().isPlaceholderEnabled()) {
-            // TODO: 处理占位符
-            // 如果你想添加PlaceholderAPI支持，可以在这里添加
-        }
-
         String format = plugin.getConfigManager().getCoveringChatFormat();
         String displayName = formatNickname(format, player, nickname);
         
-        // 转换格式中的颜色代码
-        displayName = ChatColor.translateAlternateColorCodes('&', displayName);
-        
         // 使用安全的格式化方式，确保中文正常显示
-        event.setFormat(displayName.replace("%", "%%"));
+        event.setFormat(displayName.replace("%", "%%").replace("%%2$s", "%2$s").replace("%%1$s", "%1$s"));
     }
 
     @EventHandler
@@ -100,19 +110,10 @@ public class PlayerListener implements Listener {
             return;
         }
 
-        // 处理昵称中的颜色代码
-        nickname = ChatColor.translateAlternateColorCodes('&', nickname);
-        
-        // 如果启用了占位符支持
-        if (plugin.getConfigManager().isPlaceholderEnabled()) {
-            // TODO: 处理占位符
-        }
-
         // 更新Tab栏显示
         if (plugin.getConfigManager().isCoverTab()) {
             String format = plugin.getConfigManager().getCoverTabFormat();
             String tabDisplay = formatNickname(format, player, nickname);
-            tabDisplay = ChatColor.translateAlternateColorCodes('&', tabDisplay);
             player.setPlayerListName(tabDisplay);
         }
 
@@ -120,7 +121,6 @@ public class PlayerListener implements Listener {
         if (plugin.getConfigManager().isCoverHead()) {
             String format = plugin.getConfigManager().getCoverHeadFormat();
             String headDisplay = formatNickname(format, player, nickname);
-            headDisplay = ChatColor.translateAlternateColorCodes('&', headDisplay);
             
             Scoreboard scoreboard = player.getScoreboard();
             if (scoreboard == null) {
