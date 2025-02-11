@@ -1,0 +1,29 @@
+name: PlayerNickname
+version: 1.0
+main: cn.ningmo.pnn.PlayerNickname
+api-version: '1.21'
+author: 柠枺
+description: 一个轻量级的玩家昵称插件
+
+commands:
+  pnn:
+    description: 昵称插件主命令
+    usage: /pnn <set/get/remove> [昵称]
+
+permissions:
+  pnn.set:
+    description: 允许设置昵称
+    default: true
+  pnn.get:
+    description: 允许查询昵称
+    default: true
+  pnn.remove:
+    description: 允许移除昵称
+    default: true
+  pnn.admin:
+    description: 管理员权限
+    default: op
+    children:
+      pnn.set: true
+      pnn.get: true
+      pnn.remove: true 

@@ -1,0 +1,62 @@
+#ai提示词
+#名称[pnn][玩家昵称]Playernickname
+#包名cn.ningmo
+#api:bukkit1.21
+#简介：一个不需要任何前置插件且轻量级的玩家昵称插件。
+#功能：可选择性直接覆盖原版ID显示，显示在聊天栏，tab栏以及玩家头部，玩家可以使用pnn set <昵称>来更改自己的昵称，使用pnn get (昵称可选，默认直接放出列表)获取真实玩家ID，昵称支持占位置，颜色以及其他语言，可添加昵称屏蔽词。
+#以下是配置文件内容
+
+#作者:柠枺
+#源代码由ai提供，无法保证稳定性！
+#-------------------------------
+#              ==基础配置==
+#-------------------------------
+
+#是否启用昵称占位符支持
+#可能会对假人有用，但是没人会拿假人当npc，对吧？
+placeholder: false
+
+屏蔽词列表
+Block-words:
+  - sb
+  - 傻逼
+
+#是否覆盖聊天，从而不使用其他风格聊天插件?
+covering-chat: false
+
+#覆盖聊天格式
+#占位符可用: 
+#  - pnn   直接显示玩家昵称
+#  - pnn_ID  在玩家id前缀显示昵称，不包含_
+#  - ID_pnn  在玩家ID后缀显示昵称，不包含_
+#这些占位符可在不开启覆盖时可以被其他插件利用并显示
+covering-chat-formats: "&a{pnn} &5>>> {message}"
+
+#是否覆盖tab栏玩家ID
+cover-tab: false
+
+#tab栏覆盖ID格式
+cover-tab-formats: "&a{pnn}"
+
+#是否覆盖玩家头
+cover-head: false
+
+#玩家头显示格式
+cover-head-formats: "&a{pnn}"
+
+#-------------------------------
+#              ==数据保存模式==
+#-------------------------------
+
+#可用:yaml，sqlite，MySQL
+#默认yaml
+data-saving-mode: yaml
+
+#MySQL数据库配置
+mysql:
+  host: "localhost"  # 主机
+  port: 1111  # 端口
+  database: "database"  # 数据库
+  username: "username"  # 用户名
+  password: "password"  # 密码
+

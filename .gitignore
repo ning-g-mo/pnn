@@ -1,0 +1,25 @@
+# IDE
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+
+# Build
+target/
+build/
+out/
+bin/
+dist/
+
+# Logs
+*.log
+logs/
+
+# Dependencies
+dependency-reduced-pom.xml
+
+# OS
+.DS_Store
+Thumbs.db

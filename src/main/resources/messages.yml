@@ -1,0 +1,37 @@
+# 插件消息配置文件
+prefix: "&6[昵称系统] &r"
+
+errors:
+  player-only: "&c该命令只能由玩家执行！"
+  no-permission: "&c你没有权限执行此命令！"
+  nickname-too-long: "&c昵称长度不能超过16个字符！"
+  contains-blocked-word: "&c该昵称包含违禁词！"
+  player-not-found: "&c未找到使用该昵称的玩家！"
+  player-offline: "&e找到昵称记录，但该玩家当前不在线"
+  missing-nickname: "&c请输入要设置的昵称！"
+
+success:
+  nickname-set: "&a昵称设置成功！"
+  nickname-removed: "&a昵称已移除！"
+
+info:
+  help-header: "&6=== 昵称插件帮助 ==="
+  help-set: "&e/pnn set <昵称> - 设置昵称"
+  help-get: "&e/pnn get [昵称] - 查询玩家真实ID"
+  help-remove: "&e/pnn remove - 移除昵称"
+  
+  nickname-list-header: "&6=== 在线玩家昵称列表 ==="
+  nickname-list-format: "&e%player% -> %nickname%"
+  nickname-found: "&a玩家 %nickname% 的真实ID是: %player%"
+
+# 玩家事件相关消息
+events:
+  join: "&a欢迎 %player% 加入服务器！"
+  quit: "&e%player% 离开了服务器"
+  chat-format: "&7[%player%] &f%message%"
+
+# 昵称显示格式
+display:
+  tab-format: "&e%nickname%"
+  head-format: "&e%nickname%"
+  chat-format: "&e%nickname% &7>>> &f%message%" 

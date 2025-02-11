@@ -1,0 +1,47 @@
+# 作者:柠枺
+# 源代码由ai提供，无法保证稳定性！
+#-------------------------------
+#              ==基础配置==
+#-------------------------------
+
+# 是否启用昵称占位符支持
+placeholder: false
+
+# 屏蔽词列表
+Block-words:
+  - sb
+  - 傻逼
+
+# 是否覆盖聊天，从而不使用其他风格聊天插件?
+covering-chat: false
+
+# 覆盖聊天格式
+covering-chat-formats: "&a{pnn} &5>>> {message}"
+
+# 是否覆盖tab栏玩家ID
+cover-tab: false
+
+# tab栏覆盖ID格式
+cover-tab-formats: "&a{pnn}"
+
+# 是否覆盖玩家头
+cover-head: false
+
+# 玩家头显示格式
+cover-head-formats: "&a{pnn}"
+
+#-------------------------------
+#              ==数据保存模式==
+#-------------------------------
+
+# 可用:yaml，sqlite，MySQL
+# 默认yaml
+data-saving-mode: yaml
+
+# MySQL数据库配置
+mysql:
+  host: "localhost"
+  port: 1111
+  database: "database"
+  username: "username"
+  password: "password" 
