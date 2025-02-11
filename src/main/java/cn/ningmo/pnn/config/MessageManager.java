@@ -59,4 +59,8 @@ public class MessageManager {
         }
         return message;
     }
+
+    public void reloadMessages() {
+        loadMessages();
+    }
 } 

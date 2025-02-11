@@ -19,24 +19,24 @@ covering-chat: false
 # 覆盖聊天格式
 # 可用变量:
 # - {pnn} 直接显示玩家昵称
-# - {pnn_ID} 在玩家ID前显示昵称 (例如: [昵称]玩家ID)
-# - {ID_pnn} 在玩家ID后显示昵称 (例如: 玩家ID[昵称])
+# - {pnn_ID} 在玩家ID前显示昵称
+# - {ID_pnn} 在玩家ID后显示昵称
 # - {message} 玩家消息
-covering-chat-formats: "&7{pnn_ID} &f>>> {message}"
+covering-chat-formats: "&{pnn_ID} &f>>> {message}"
 
 # 是否覆盖tab栏玩家ID
 cover-tab: false
 
 # tab栏覆盖ID格式
 # 可用变量同上
-cover-tab-formats: "&7{ID_pnn}"
+cover-tab-formats: "&{pnn}"
 
 # 是否覆盖玩家头
 cover-head: false
 
 # 玩家头显示格式
 # 可用变量同上
-cover-head-formats: "&7{pnn}"
+cover-head-formats: "&{pnn}"
 
 #-------------------------------
 #              ==数据保存模式==

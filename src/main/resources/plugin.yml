@@ -8,7 +8,7 @@ description: 一个轻量级的玩家昵称插件
 commands:
   pnn:
     description: 昵称插件主命令
-    usage: /pnn <set/get/remove> [昵称]
+    usage: /pnn <set/get/remove/reload> [昵称]
 
 permissions:
   pnn.set:
@@ -26,4 +26,8 @@ permissions:
     children:
       pnn.set: true
       pnn.get: true
-      pnn.remove: true 
+      pnn.remove: true
+      pnn.reload: true
+  pnn.reload:
+    description: 允许重载配置
+    default: op

@@ -70,6 +70,13 @@ public class NicknameCommand implements CommandExecutor {
                 }
                 removeNickname(sender);
                 break;
+            case "reload":
+                if (!sender.hasPermission("pnn.admin")) {
+                    sender.sendMessage(plugin.getMessageManager().getMessage("errors.no-permission"));
+                    return true;
+                }
+                reloadConfig(sender);
+                break;
             default:
                 sendHelp(sender);
                 break;
@@ -144,6 +151,12 @@ public class NicknameCommand implements CommandExecutor {
         sender.sendMessage(plugin.getMessageManager().getMessage("success.nickname-removed"));
     }
 
+    private void reloadConfig(CommandSender sender) {
+        plugin.reloadConfig();
+        plugin.getMessageManager().reloadMessages();
+        sender.sendMessage(plugin.getMessageManager().getMessage("success.config-reloaded"));
+    }
+
     private void sendHelp(CommandSender sender) {
         sender.sendMessage(plugin.getMessageManager().getMessage("info.help-header"));
         if (sender.hasPermission("pnn.set")) {
@@ -154,6 +167,9 @@ public class NicknameCommand implements CommandExecutor {
         }
         if (sender.hasPermission("pnn.remove")) {
             sender.sendMessage(plugin.getMessageManager().getMessage("info.help-remove"));
+        }
+        if (sender.hasPermission("pnn.reload")) {
+            sender.sendMessage(plugin.getMessageManager().getMessage("info.help-reload"));
         }
     }
 } 

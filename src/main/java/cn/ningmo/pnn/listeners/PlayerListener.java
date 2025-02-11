@@ -20,8 +20,8 @@ public class PlayerListener implements Listener {
 
     private String formatNickname(String format, Player player, String nickname) {
         return format.replace("{pnn}", nickname)
-                    .replace("{pnn_ID}", String.format("[%s]%s", nickname, player.getName()))
-                    .replace("{ID_pnn}", String.format("%s[%s]", player.getName(), nickname))
+                    .replace("{pnn_ID}", nickname + player.getName())
+                    .replace("{ID_pnn}", player.getName() + nickname)
                     .replace("{message}", "%2$s")
                     .replace("%player%", player.getName())
                     .replace("%nickname%", nickname)

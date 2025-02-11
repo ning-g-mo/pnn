@@ -13,12 +13,14 @@ errors:
 success:
   nickname-set: "&a昵称设置成功！"
   nickname-removed: "&a昵称已移除！"
+  config-reloaded: "&a配置文件已重新加载！"
 
 info:
   help-header: "&7=== 昵称插件帮助 ==="
   help-set: "&f/pnn set <昵称> - 设置昵称"
   help-get: "&f/pnn get [昵称] - 查询玩家真实ID"
   help-remove: "&f/pnn remove - 移除昵称"
+  help-reload: "&f/pnn reload - 重新加载配置"
   
   nickname-list-header: "&7=== 在线玩家昵称列表 ==="
   nickname-list-format: "&f%player% &7-> &f%nickname%"
@@ -26,5 +28,5 @@ info:
 
 # 玩家事件相关消息
 events:
-  join: "&8[&a+&8] &7%player%"
-  quit: "&8[&c-&8] &7%player%" 
+  join: "&a+ &f%player%"
+  quit: "&c- &f%player%" 
