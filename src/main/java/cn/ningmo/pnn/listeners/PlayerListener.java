@@ -18,6 +18,16 @@ public class PlayerListener implements Listener {
         this.plugin = plugin;
     }
 
+    private String formatNickname(String format, Player player, String nickname) {
+        return format.replace("{pnn}", nickname)
+                    .replace("{pnn_ID}", String.format("[%s]%s", nickname, player.getName()))
+                    .replace("{ID_pnn}", String.format("%s[%s]", player.getName(), nickname))
+                    .replace("{message}", "%2$s")
+                    .replace("%player%", player.getName())
+                    .replace("%nickname%", nickname)
+                    .replace("%message%", "%2$s");
+    }
+
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         if (!plugin.getConfigManager().isCoveringChat()) {
@@ -30,11 +40,9 @@ public class PlayerListener implements Listener {
             nickname = player.getName();
         }
 
-        String format = plugin.getMessageManager().getMessage("display.chat-format")
-                .replace("%nickname%", nickname)
-                .replace("%player%", player.getName())
-                .replace("%message%", "%2$s");
-        event.setFormat(format);
+        String format = plugin.getConfigManager().getCoveringChatFormat();
+        event.setFormat(ChatColor.translateAlternateColorCodes('&', 
+            formatNickname(format, player, nickname)));
     }
 
     @EventHandler
@@ -68,17 +76,16 @@ public class PlayerListener implements Listener {
 
         // 更新Tab栏显示
         if (plugin.getConfigManager().isCoverTab()) {
-            String tabFormat = plugin.getMessageManager().getMessage("display.tab-format")
-                    .replace("%nickname%", nickname)
-                    .replace("%player%", player.getName());
-            player.setPlayerListName(tabFormat);
+            String format = plugin.getConfigManager().getCoverTabFormat();
+            player.setPlayerListName(ChatColor.translateAlternateColorCodes('&',
+                formatNickname(format, player, nickname)));
         }
 
         // 更新头顶显示
         if (plugin.getConfigManager().isCoverHead()) {
-            String headFormat = plugin.getMessageManager().getMessage("display.head-format")
-                    .replace("%nickname%", nickname)
-                    .replace("%player%", player.getName());
+            String format = plugin.getConfigManager().getCoverHeadFormat();
+            String headDisplay = ChatColor.translateAlternateColorCodes('&',
+                formatNickname(format, player, nickname));
             
             Scoreboard scoreboard = player.getScoreboard();
             if (scoreboard == null) {
@@ -92,7 +99,7 @@ public class PlayerListener implements Listener {
                 team = scoreboard.registerNewTeam(teamName);
             }
 
-            team.setPrefix(headFormat);
+            team.setPrefix(headDisplay);
             team.addEntry(player.getName());
         }
     }

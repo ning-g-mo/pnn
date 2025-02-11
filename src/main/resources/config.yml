@@ -5,6 +5,7 @@
 #-------------------------------
 
 # 是否启用昵称占位符支持
+# 可能会对假人有用，但是没人会拿假人当npc，对吧？
 placeholder: false
 
 # 屏蔽词列表
@@ -16,19 +17,26 @@ Block-words:
 covering-chat: false
 
 # 覆盖聊天格式
-covering-chat-formats: "&a{pnn} &5>>> {message}"
+# 可用变量:
+# - {pnn} 直接显示玩家昵称
+# - {pnn_ID} 在玩家ID前显示昵称 (例如: [昵称]玩家ID)
+# - {ID_pnn} 在玩家ID后显示昵称 (例如: 玩家ID[昵称])
+# - {message} 玩家消息
+covering-chat-formats: "&7{pnn_ID} &f>>> {message}"
 
 # 是否覆盖tab栏玩家ID
 cover-tab: false
 
 # tab栏覆盖ID格式
-cover-tab-formats: "&a{pnn}"
+# 可用变量同上
+cover-tab-formats: "&7{ID_pnn}"
 
 # 是否覆盖玩家头
 cover-head: false
 
 # 玩家头显示格式
-cover-head-formats: "&a{pnn}"
+# 可用变量同上
+cover-head-formats: "&7{pnn}"
 
 #-------------------------------
 #              ==数据保存模式==
@@ -41,7 +49,7 @@ data-saving-mode: yaml
 # MySQL数据库配置
 mysql:
   host: "localhost"
-  port: 1111
+  port: 3306
   database: "database"
   username: "username"
   password: "password" 

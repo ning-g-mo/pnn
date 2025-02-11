@@ -1,5 +1,5 @@
 # 插件消息配置文件
-prefix: "&6[昵称系统] &r"
+prefix: "&7[昵称] &r"
 
 errors:
   player-only: "&c该命令只能由玩家执行！"
@@ -15,23 +15,16 @@ success:
   nickname-removed: "&a昵称已移除！"
 
 info:
-  help-header: "&6=== 昵称插件帮助 ==="
-  help-set: "&e/pnn set <昵称> - 设置昵称"
-  help-get: "&e/pnn get [昵称] - 查询玩家真实ID"
-  help-remove: "&e/pnn remove - 移除昵称"
+  help-header: "&7=== 昵称插件帮助 ==="
+  help-set: "&f/pnn set <昵称> - 设置昵称"
+  help-get: "&f/pnn get [昵称] - 查询玩家真实ID"
+  help-remove: "&f/pnn remove - 移除昵称"
   
-  nickname-list-header: "&6=== 在线玩家昵称列表 ==="
-  nickname-list-format: "&e%player% -> %nickname%"
-  nickname-found: "&a玩家 %nickname% 的真实ID是: %player%"
+  nickname-list-header: "&7=== 在线玩家昵称列表 ==="
+  nickname-list-format: "&f%player% &7-> &f%nickname%"
+  nickname-found: "&7玩家 &f%nickname% &7的真实ID是: &f%player%"
 
 # 玩家事件相关消息
 events:
-  join: "&a欢迎 %player% 加入服务器！"
-  quit: "&e%player% 离开了服务器"
-  chat-format: "&7[%player%] &f%message%"
-
-# 昵称显示格式
-display:
-  tab-format: "&e%nickname%"
-  head-format: "&e%nickname%"
-  chat-format: "&e%nickname% &7>>> &f%message%" 
+  join: "&8[&a+&8] &7%player%"
+  quit: "&8[&c-&8] &7%player%" 

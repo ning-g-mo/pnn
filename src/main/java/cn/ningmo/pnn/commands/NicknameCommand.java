@@ -2,6 +2,7 @@ package cn.ningmo.pnn.commands;
 
 import cn.ningmo.pnn.PlayerNickname;
 import cn.ningmo.pnn.events.NicknameChangeEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -19,50 +20,58 @@ public class NicknameCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(plugin.getMessageManager().getMessage("errors.player-only"));
-            return true;
-        }
-
-        Player player = (Player) sender;
-
         if (args.length == 0) {
-            sendHelp(player);
+            sendHelp(sender);
             return true;
         }
 
         switch (args[0].toLowerCase()) {
             case "set":
-                if (!player.hasPermission("pnn.set")) {
-                    player.sendMessage(plugin.getMessageManager().getMessage("errors.no-permission"));
-                    return true;
+                if (!(sender instanceof Player)) {
+                    if (args.length < 3) {
+                        sender.sendMessage("用法: /pnn set <玩家> <昵称>");
+                        return true;
+                    }
+                    Player target = Bukkit.getPlayer(args[1]);
+                    if (target == null) {
+                        sender.sendMessage("玩家不在线!");
+                        return true;
+                    }
+                    setNickname(target, args[2]);
+                    sender.sendMessage("已设置玩家 " + target.getName() + " 的昵称为: " + args[2]);
+                } else {
+                    Player player = (Player) sender;
+                    if (!player.hasPermission("pnn.set")) {
+                        player.sendMessage(plugin.getMessageManager().getMessage("errors.no-permission"));
+                        return true;
+                    }
+                    if (args.length < 2) {
+                        player.sendMessage(plugin.getMessageManager().getMessage("errors.missing-nickname"));
+                        return true;
+                    }
+                    setNickname(player, args[1]);
                 }
-                if (args.length < 2) {
-                    player.sendMessage(plugin.getMessageManager().getMessage("errors.missing-nickname"));
-                    return true;
-                }
-                setNickname(player, args[1]);
                 break;
             case "get":
-                if (!player.hasPermission("pnn.get")) {
-                    player.sendMessage(plugin.getMessageManager().getMessage("errors.no-permission"));
+                if (!sender.hasPermission("pnn.get")) {
+                    sender.sendMessage(plugin.getMessageManager().getMessage("errors.no-permission"));
                     return true;
                 }
                 if (args.length < 2) {
-                    listAllNicknames(player);
+                    listAllNicknames(sender);
                 } else {
-                    getNickname(player, args[1]);
+                    getNickname(sender, args[1]);
                 }
                 break;
             case "remove":
-                if (!player.hasPermission("pnn.remove")) {
-                    player.sendMessage(plugin.getMessageManager().getMessage("errors.no-permission"));
+                if (!sender.hasPermission("pnn.remove")) {
+                    sender.sendMessage(plugin.getMessageManager().getMessage("errors.no-permission"));
                     return true;
                 }
-                removeNickname(player);
+                removeNickname(sender);
                 break;
             default:
-                sendHelp(player);
+                sendHelp(sender);
                 break;
         }
         return true;
@@ -90,35 +99,41 @@ public class NicknameCommand implements CommandExecutor {
         player.sendMessage(plugin.getMessageManager().getMessage("success.nickname-set"));
     }
 
-    private void getNickname(Player player, String nickname) {
+    private void getNickname(CommandSender sender, String nickname) {
         UUID uuid = plugin.getStorageManager().getPlayerByNickname(nickname);
         if (uuid != null) {
             Player target = plugin.getServer().getPlayer(uuid);
             if (target != null) {
-                player.sendMessage(plugin.getMessageManager().getMessage("info.nickname-found",
+                sender.sendMessage(plugin.getMessageManager().getMessage("info.nickname-found",
                     "%nickname%", nickname,
                     "%player%", target.getName()));
             } else {
-                player.sendMessage(plugin.getMessageManager().getMessage("errors.player-offline"));
+                sender.sendMessage(plugin.getMessageManager().getMessage("errors.player-offline"));
             }
         } else {
-            player.sendMessage(plugin.getMessageManager().getMessage("errors.player-not-found"));
+            sender.sendMessage(plugin.getMessageManager().getMessage("errors.player-not-found"));
         }
     }
 
-    private void listAllNicknames(Player player) {
-        player.sendMessage(plugin.getMessageManager().getMessage("info.nickname-list-header"));
+    private void listAllNicknames(CommandSender sender) {
+        sender.sendMessage(plugin.getMessageManager().getMessage("info.nickname-list-header"));
         for (Player online : plugin.getServer().getOnlinePlayers()) {
             String nickname = plugin.getStorageManager().getNickname(online.getUniqueId());
             if (nickname != null) {
-                player.sendMessage(plugin.getMessageManager().getMessage("info.nickname-list-format",
+                sender.sendMessage(plugin.getMessageManager().getMessage("info.nickname-list-format",
                     "%player%", online.getName(),
                     "%nickname%", nickname));
             }
         }
     }
 
-    private void removeNickname(Player player) {
+    private void removeNickname(CommandSender sender) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(plugin.getMessageManager().getMessage("errors.player-only"));
+            return;
+        }
+
+        Player player = (Player) sender;
         String oldNickname = plugin.getStorageManager().getNickname(player.getUniqueId());
         if (oldNickname != null) {
             NicknameChangeEvent event = new NicknameChangeEvent(player, oldNickname, null);
@@ -126,19 +141,19 @@ public class NicknameCommand implements CommandExecutor {
         }
 
         plugin.getStorageManager().removeNickname(player.getUniqueId());
-        player.sendMessage(plugin.getMessageManager().getMessage("success.nickname-removed"));
+        sender.sendMessage(plugin.getMessageManager().getMessage("success.nickname-removed"));
     }
 
-    private void sendHelp(Player player) {
-        player.sendMessage(plugin.getMessageManager().getMessage("info.help-header"));
-        if (player.hasPermission("pnn.set")) {
-            player.sendMessage(plugin.getMessageManager().getMessage("info.help-set"));
+    private void sendHelp(CommandSender sender) {
+        sender.sendMessage(plugin.getMessageManager().getMessage("info.help-header"));
+        if (sender.hasPermission("pnn.set")) {
+            sender.sendMessage(plugin.getMessageManager().getMessage("info.help-set"));
         }
-        if (player.hasPermission("pnn.get")) {
-            player.sendMessage(plugin.getMessageManager().getMessage("info.help-get"));
+        if (sender.hasPermission("pnn.get")) {
+            sender.sendMessage(plugin.getMessageManager().getMessage("info.help-get"));
         }
-        if (player.hasPermission("pnn.remove")) {
-            player.sendMessage(plugin.getMessageManager().getMessage("info.help-remove"));
+        if (sender.hasPermission("pnn.remove")) {
+            sender.sendMessage(plugin.getMessageManager().getMessage("info.help-remove"));
         }
     }
 } 
