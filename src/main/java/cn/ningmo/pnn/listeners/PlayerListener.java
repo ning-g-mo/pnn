@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -18,6 +19,22 @@ public class PlayerListener implements Listener {
 
     public PlayerListener(PlayerNickname plugin) {
         this.plugin = plugin;
+        
+        // 每秒检查一次tab显示
+        Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            if (plugin.getConfigManager().isCoverTab()) {
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    String nickname = plugin.getStorageManager().getNickname(player.getUniqueId());
+                    if (nickname != null) {
+                        String format = plugin.getConfigManager().getCoverTabFormat();
+                        String tabDisplay = formatNickname(format, player, nickname);
+                        if (!tabDisplay.equals(player.getPlayerListName())) {
+                            player.setPlayerListName(tabDisplay);
+                        }
+                    }
+                }
+            }
+        }, 20L, 20L);  // 20tick = 1秒
     }
 
     private String processPlaceholders(String text, Player player) {
@@ -55,12 +72,11 @@ public class PlayerListener implements Listener {
                       .replace("%player%", player.getName())
                       .replace("%nickname%", nickname);
         
-        // 确保消息占位符正确
-        if (!result.contains("%2$s")) {
-            result = result.trim() + " %2$s";
-        }
+        // 移除多余的格式化符号
+        result = result.replace("%2$sNingMo_yanyan", "")
+                      .replace("%2$s", "");
         
-        return result;
+        return result.trim();  // 移除首尾空格
     }
 
     @EventHandler
@@ -78,20 +94,11 @@ public class PlayerListener implements Listener {
         String format = plugin.getConfigManager().getCoveringChatFormat();
         String displayName = formatNickname(format, player, nickname);
         
-        // 处理格式字符串，确保安全
-        displayName = displayName.replace("%", "%%")  // 转义所有%
-                                .replace("%%2$s", "%2$s"); // 还原消息占位符
-        
-        try {
-            event.setFormat(displayName);
-        } catch (Exception e) {
-            // 如果格式设置失败，使用安全的默认格式
-            plugin.getLogger().warning("聊天格式设置失败，使用默认格式");
-            event.setFormat("%2$s");
-        }
+        // 设置聊天格式，确保消息正确显示
+        event.setFormat(displayName + " %2$s");
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)  // 使用最高优先级
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         
@@ -102,10 +109,10 @@ public class PlayerListener implements Listener {
                 "%player%", nickname));
         }
 
-        // 延迟一tick更新昵称显示，确保其他插件的处理已完成
+        // 延迟更长时间更新昵称显示，确保在其他插件之后
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             updatePlayerNickname(player);
-        }, 1L);
+        }, 5L);  // 延迟5tick而不是1tick
     }
 
     @EventHandler
@@ -121,7 +128,7 @@ public class PlayerListener implements Listener {
     private void updatePlayerNickname(Player player) {
         String nickname = plugin.getStorageManager().getNickname(player.getUniqueId());
         if (nickname == null) {
-            nickname = player.getName();  // 如果没有昵称，使用玩家名
+            return;  // 如果没有昵称，不进行任何更改
         }
 
         // 更新Tab栏显示
@@ -129,14 +136,13 @@ public class PlayerListener implements Listener {
             String format = plugin.getConfigManager().getCoverTabFormat();
             String tabDisplay = formatNickname(format, player, nickname);
             
-            // 确保在主线程中更新
-            if (!Bukkit.isPrimaryThread()) {
-                Bukkit.getScheduler().runTask(plugin, () -> {
-                    player.setPlayerListName(tabDisplay);
-                });
-            } else {
+            // 强制更新tab显示
+            Bukkit.getScheduler().runTask(plugin, () -> {
                 player.setPlayerListName(tabDisplay);
-            }
+                // 刷新玩家显示
+                player.hidePlayer(plugin, player);
+                player.showPlayer(plugin, player);
+            });
         }
 
         // 更新头顶显示
