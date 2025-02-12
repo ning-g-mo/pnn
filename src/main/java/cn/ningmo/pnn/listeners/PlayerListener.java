@@ -94,14 +94,18 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        updatePlayerNickname(player);
-
+        
         // 设置加入消息
         String nickname = plugin.getStorageManager().getNickname(player.getUniqueId());
         if (nickname != null) {
             event.setJoinMessage(plugin.getMessageManager().getMessage("events.join",
                 "%player%", nickname));
         }
+
+        // 延迟一tick更新昵称显示，确保其他插件的处理已完成
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            updatePlayerNickname(player);
+        }, 1L);
     }
 
     @EventHandler
@@ -117,14 +121,22 @@ public class PlayerListener implements Listener {
     private void updatePlayerNickname(Player player) {
         String nickname = plugin.getStorageManager().getNickname(player.getUniqueId());
         if (nickname == null) {
-            return;
+            nickname = player.getName();  // 如果没有昵称，使用玩家名
         }
 
         // 更新Tab栏显示
         if (plugin.getConfigManager().isCoverTab()) {
             String format = plugin.getConfigManager().getCoverTabFormat();
             String tabDisplay = formatNickname(format, player, nickname);
-            player.setPlayerListName(tabDisplay);
+            
+            // 确保在主线程中更新
+            if (!Bukkit.isPrimaryThread()) {
+                Bukkit.getScheduler().runTask(plugin, () -> {
+                    player.setPlayerListName(tabDisplay);
+                });
+            } else {
+                player.setPlayerListName(tabDisplay);
+            }
         }
 
         // 更新头顶显示
