@@ -7,7 +7,7 @@
 # 是否启用昵称占位符支持
 # 启用后可以在昵称中使用PlaceholderAPI变量
 # 例如: &c%player_name% 将显示带颜色的玩家名
-placeholder: false
+placeholder: true
 
 # 屏蔽词列表
 Block-words:
@@ -15,7 +15,7 @@ Block-words:
   - 傻逼
 
 # 是否覆盖聊天，从而不使用其他风格聊天插件?
-covering-chat: false
+covering-chat: true
 
 # 覆盖聊天格式
 # 可用变量:
@@ -26,14 +26,14 @@ covering-chat: false
 covering-chat-formats: "%pnn% &f>>> %message%"
 
 # 是否覆盖tab栏玩家ID
-cover-tab: false
+cover-tab: true
 
 # tab栏覆盖ID格式
 # 可用变量同上
 cover-tab-formats: "&7%pnn%"
 
 # 是否覆盖玩家头
-cover-head: false
+cover-head: true
 
 # 玩家头显示格式
 # 可用变量同上
@@ -43,14 +43,5 @@ cover-head-formats: "&7%pnn%"
 #              ==数据保存模式==
 #-------------------------------
 
-# 可用:yaml，sqlite，MySQL
-# 默认yaml
-data-saving-mode: yaml
-
-# MySQL数据库配置
-mysql:
-  host: "localhost"
-  port: 3306
-  database: "database"
-  username: "username"
-  password: "password" 
+# 使用YAML存储数据
+data-saving-mode: yaml 

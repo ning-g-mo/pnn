@@ -21,42 +21,43 @@ public class PlayerListener implements Listener {
     }
 
     private String processPlaceholders(String text, Player player) {
-        // 处理颜色代码
-        text = ChatColor.translateAlternateColorCodes('&', text);
+        if (text == null) {
+            return "";
+        }
         
-        // 如果启用了PAPI且已安装PAPI
+        // 先处理PAPI变量
         if (plugin.getConfigManager().isPlaceholderEnabled() && 
             Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             text = PlaceholderAPI.setPlaceholders(player, text);
         }
         
-        return text;
+        // 再处理颜色代码
+        return ChatColor.translateAlternateColorCodes('&', text);
     }
 
     private String formatNickname(String format, Player player, String nickname) {
-        // 处理昵称中的颜色代码和PAPI变量
+        // 先处理昵称中的PAPI变量和颜色代码
         nickname = processPlaceholders(nickname, player);
         
-        // 处理占位符
-        String result = format
-            .replace("%pnn%", nickname)
-            .replace("%pnn_ID%", nickname + player.getName())
-            .replace("%ID_pnn%", player.getName() + nickname)
-            .replace("%message%", "%2$s")
-            .replace("%player%", player.getName())
-            .replace("%nickname%", nickname);
+        // 处理格式中的PAPI变量和颜色代码
+        format = processPlaceholders(format, player);
         
-        // 处理格式中的颜色代码和PAPI变量
-        result = processPlaceholders(result, player);
+        // 处理占位符
+        String result = format;
+        
+        // 先处理复合格式的占位符
+        result = result.replace("%pnn_ID%", nickname + player.getName())
+                      .replace("%ID_pnn%", player.getName() + nickname);
+        
+        // 再处理简单格式的占位符
+        result = result.replace("%pnn%", nickname)
+                      .replace("%message%", "%2$s")
+                      .replace("%player%", player.getName())
+                      .replace("%nickname%", nickname);
         
         // 确保消息占位符正确
         if (!result.contains("%2$s")) {
-            result += " %2$s";
-        }
-        
-        // 添加玩家名占位符
-        if (!result.contains("%1$s")) {
-            result = "%1$s " + result;
+            result = result.trim() + " %2$s";
         }
         
         return result;
@@ -77,8 +78,17 @@ public class PlayerListener implements Listener {
         String format = plugin.getConfigManager().getCoveringChatFormat();
         String displayName = formatNickname(format, player, nickname);
         
-        // 使用安全的格式化方式，确保中文正常显示
-        event.setFormat(displayName.replace("%", "%%").replace("%%2$s", "%2$s").replace("%%1$s", "%1$s"));
+        // 处理格式字符串，确保安全
+        displayName = displayName.replace("%", "%%")  // 转义所有%
+                                .replace("%%2$s", "%2$s"); // 还原消息占位符
+        
+        try {
+            event.setFormat(displayName);
+        } catch (Exception e) {
+            // 如果格式设置失败，使用安全的默认格式
+            plugin.getLogger().warning("聊天格式设置失败，使用默认格式");
+            event.setFormat("%2$s");
+        }
     }
 
     @EventHandler

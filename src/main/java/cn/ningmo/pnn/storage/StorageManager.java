@@ -4,39 +4,17 @@ import cn.ningmo.pnn.PlayerNickname;
 import cn.ningmo.pnn.cache.NicknameCache;
 import org.bukkit.Bukkit;
 
-import java.sql.SQLException;
 import java.util.UUID;
 
 public class StorageManager {
-    private Storage storage;
+    private final Storage storage;
     private final NicknameCache cache;
     private final PlayerNickname plugin;
 
     public StorageManager(PlayerNickname plugin) {
         this.plugin = plugin;
         this.cache = new NicknameCache(plugin);
-        initStorage();
-    }
-
-    private void initStorage() {
-        String mode = plugin.getConfigManager().getDataSavingMode();
-        try {
-            switch (mode) {
-                case "mysql":
-                    storage = new MySQLStorage(plugin);
-                    break;
-                case "sqlite":
-                    storage = new SQLiteStorage(plugin);
-                    break;
-                case "yaml":
-                default:
-                    storage = new YamlStorage(plugin);
-                    break;
-            }
-        } catch (SQLException e) {
-            plugin.getLogger().severe("数据库连接失败! 使用YAML存储作为备选.");
-            storage = new YamlStorage(plugin);
-        }
+        this.storage = new YamlStorage(plugin);
     }
 
     public void setNickname(UUID uuid, String nickname) {
@@ -99,11 +77,9 @@ public class StorageManager {
     }
 
     public void reload() {
-        // 关闭旧的存储连接
-        storage.close();
+        // 清理缓存
         cache.clear();
-        
-        // 重新初始化存储
-        initStorage();
+        // 重新加载存储
+        storage.close();
     }
 } 
